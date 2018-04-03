@@ -16,9 +16,11 @@ class DockerHub
 
     return 'unknown' if response.code != 200 or response['results'].nil? or response['results'].empty?
 
-    return 'building' if response['results'][0]['status'] == 3
+    build_status = response['results'][0]['status']
+    return 'queued' if build_status == 0
+    return 'building' if build_status == 3
 
-    return response['results'][0]['status'] == 10 ? 'pass' : 'fail'
+    return build_status == 10 ? 'pass' : 'fail'
 
   end
 end
