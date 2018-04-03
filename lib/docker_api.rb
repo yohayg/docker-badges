@@ -18,9 +18,9 @@ class DockerHub
 
     build_status = response['results'][0]['status']
     return 'queued' if build_status == 0
-    return 'building' if build_status == 3
-
-    return build_status == 10 ? 'pass' : 'fail'
+    return 'failed' if build_status == -1
+    return 'pass' if build_status == 10
+    return 'in progress'
 
   end
 end
