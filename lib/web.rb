@@ -9,7 +9,7 @@ PROJECT_SITE = 'https://github.com/jirutka/maven-badges'
 
 configure :production do
   disable :static
-  before {cache_control :public, :max_age => 3600}
+  # before {cache_control :public, :max_age => 3600}
 end
 
 #Returns badge image with the repository last build status
