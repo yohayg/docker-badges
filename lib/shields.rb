@@ -3,12 +3,13 @@ require 'httparty'
 class Shields
   include HTTParty
 
-  REPLACEMENTS = {'_' => '__', ' ' => '_', '-' => '--' }
+  REPLACEMENTS = {'_' => '__', ' ' => '_', '-' => '--'}
 
   base_uri 'img.shields.io'
 
-  def self.badge_image(subject, status, color, format='svg', style='default')
+  def self.badge_image(subject, status, color, format = 'svg', style = 'default')
     resp = get("/badge/#{encode(subject)}-#{encode(status)}-#{color}.#{format}?style=#{style}")
+
 
     raise HTTParty::ResponseError.new(resp) unless resp.code == 200
     resp.body

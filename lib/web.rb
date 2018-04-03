@@ -1,30 +1,31 @@
 require 'sinatra'
-require_relative 'maven_central'
+require_relative 'docker_api'
 require_relative 'shields'
+require 'pry'
 
-DEFAULT_SUBJECT = 'maven central'
+DEFAULT_SUBJECT = 'docker automated build'
 DEFAULT_STYLE = 'default'
 PROJECT_SITE = 'https://github.com/jirutka/maven-badges'
 
 configure :production do
   disable :static
-  before { cache_control :public, :max_age => 3600 }
+  before {cache_control :public, :max_age => 3600}
 end
 
-get '/' do
-  content_type :text
-  "Nothing is here, see #{PROJECT_SITE}."
-end
+#Returns badge image with the repository last build status
+get %r{/docker-hub/(.+)} do
+  url = params[:captures]
+  req = url[0].split('/')
+  repository = req[0] + '/' + req[1]
+  format = req[2].split('.')[1]
 
-# Returns badge image with the artifact's last version number
-get '/maven-central/:group/:artifact/badge.:format' do |group, artifact, format|
-  halt 415 unless ['svg', 'png'].include? format
+  halt 415 unless %w(svg png).include? format
 
   content_type format
   subject = params['subject'] || DEFAULT_SUBJECT
 
   begin
-    version = MavenCentral.last_artifact_version(group, artifact)
+    version = DockerHub.last_artifact_version(repository)
     color = :brightgreen
   rescue NotFoundError
     version = 'unknown'
@@ -36,21 +37,9 @@ get '/maven-central/:group/:artifact/badge.:format' do |group, artifact, format|
   Shields.badge_image(subject, version, color, format, style)
 end
 
-# Returns the artifact's last version number in plain text
-get '/maven-central/:group/:artifact/last_version' do |group, artifact|
+get '/' do
   content_type :text
-
-  MavenCentral.last_artifact_version(group, artifact)
-end
-
-# Redirects to the artifact's page on search.maven.org
-get '/maven-central/:group/:artifact/?' do |group, artifact|
-  begin
-    version = MavenCentral.last_artifact_version(group, artifact)
-    redirect to MavenCentral.artifact_details_url(group, artifact, version)
-  rescue NotFoundError
-    redirect to MavenCentral.search_by_ga_url(group, artifact)
-  end
+  "Nothing is here, see #{PROJECT_SITE}."
 end
 
 error do
