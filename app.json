@@ -1,0 +1,6 @@
+{
+  "name": "Docker Hub Repository Last Build Status",
+  "description": "Return a github badge for docker hub repository last build status",
+  "repository": "https://github.com/yohayg/docker-badges",
+  "keywords": ["ruby", "github", "badge", "docker hub"]
+}
