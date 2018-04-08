@@ -2,6 +2,7 @@ require 'sinatra'
 require_relative 'docker_api'
 require_relative 'shields'
 require 'pry'
+require 'newrelic_rpm'
 
 DEFAULT_SUBJECT = 'docker automated build'
 DEFAULT_STYLE = 'default'
